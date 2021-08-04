@@ -39,7 +39,7 @@ request_id, phone_number = client.request_phone_number(country_id=1,
 sms_code = client.get_sms(request_id)
 
 ```
-#Referral program
+##Referral program
 Detailed conditions of the affiliate program:
 
 1. The referral program was created exclusively to stimulate and the dissemination of information about the sms-man.com
@@ -51,7 +51,7 @@ Detailed conditions of the affiliate program:
 7. Referral funds are withdrawn within 24 hours of the application. The minimum withdrawal amount is $5. Transfer to [sms-man.com](https://sms-man.com) account is carried out instantly and without commission.
 8. The sms-man.com administration has the right to refuse to pay funds if facts of fake up invited users or other cases of abuse of the referral program are established.  
   
-#How do I use the referral program in the API?
+##How do I use the referral program in the API?
 Find your referral code [here](https://sms-man.com/site/profile)
 ```python
 from smsman.smsman import Smsman
