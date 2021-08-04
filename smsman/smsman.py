@@ -1,5 +1,5 @@
 import requests
-from errors import ClientError
+from smsman.errors import ClientError
 
 
 class Smsman:
