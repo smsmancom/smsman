@@ -7,7 +7,7 @@ requirements = ["requests>=2"]
 
 setup(
     name="smsman",
-    version="0.0.6",
+    version="0.0.8",
     author="Dmitry Tikhomirov",
     author_email="dimasta00@gmail.com",
     description="A package to simplify work with the sms-man API",

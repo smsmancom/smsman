@@ -10,6 +10,7 @@ class Smsman:
     __method_get_sms = "/get-sms"
     __method_get_all_countries = "/countries"
     __method_get_all_services = "/applications"
+    __method_reject_number = "/set-status"
 
     def __init__(self, token: str, ref="p_moTasn52wq"):
         """
@@ -98,6 +99,16 @@ class Smsman:
         else:
             raise SMSnotReceivedError(response.json()['error_msg'])
 
+    def reject_number(self, request_id: str):
+        """
+        Returns the number if it did not receive an SMS. Money is returned to the balance
+        :param request_id: Number of IF (get with phone number)
+        """
+        params = self.__check_params(request_id=request_id, status="reject")
+
+        requests.get(self.__base_url + self.__method_reject_number, params=params)
+
+
     def get_all_countries(self):
         """
         Return information about all countries
@@ -128,7 +139,7 @@ class Smsman:
         else:
             raise WrongTokenError(response.json()['error_msg'])
 
-    def __check_params(self, country_id=None, application_id=None, request_id=None):
+    def __check_params(self, country_id=None, application_id=None, request_id=None, status=None):
         """
         Create params for request
 
@@ -145,6 +156,8 @@ class Smsman:
             params['country_id'] = country_id
         if application_id:
             params['application_id'] = application_id
+        if status:
+            params['status'] = status
         if request_id:
             params['request_id'] = request_id
 
