@@ -1,5 +1,5 @@
 import requests
-from errors import WrongTokenError, SMSnotReceivedError, LowBalance
+from smsman.errors import WrongTokenError, SMSnotReceivedError, LowBalance
 
 
 class Smsman:
