@@ -1,5 +1,5 @@
 import requests
-from smsman.errors import WrongTokenError, SMSnotReceivedError
+from errors import WrongTokenError, SMSnotReceivedError, LowBalance
 
 
 class Smsman:
@@ -70,13 +70,16 @@ class Smsman:
 
         params = self.__check_params(country_id, application_id)
 
-        if self.__ref:
-            params['ref'] = self.__ref
+        params['ref'] = self.__ref
 
         response = requests.get(self.__base_url + self.__method_get_number, params=params)
-
-        if "request_id" in response.json() and "number" in response.json():
-            return response.json()['request_id'], response.json()["number"]
+        print(response.url)
+        print(response.json())
+        resp_json = response.json()
+        if "request_id" in resp_json and "number" in resp_json:
+            return resp_json['request_id'], resp_json["number"]
+        elif resp_json['error_code'] == "balance":
+            raise LowBalance(resp_json['error_msg'])
         else:
             raise WrongTokenError(response.json()['error_msg'])
 
@@ -107,7 +110,6 @@ class Smsman:
         params = self.__check_params(request_id=request_id, status="reject")
 
         requests.get(self.__base_url + self.__method_reject_number, params=params)
-
 
     def get_all_countries(self):
         """
@@ -162,3 +164,7 @@ class Smsman:
             params['request_id'] = request_id
 
         return params
+
+
+sms = Smsman("w9DG_uo_H9PqKqInTcaBLvAOFePOSsDh")
+sms.request_phone_number(1, 1)
