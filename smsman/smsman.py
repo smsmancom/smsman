@@ -73,8 +73,6 @@ class Smsman:
         params['ref'] = self.__ref
 
         response = requests.get(self.__base_url + self.__method_get_number, params=params)
-        print(response.url)
-        print(response.json())
         resp_json = response.json()
         if "request_id" in resp_json and "number" in resp_json:
             return resp_json['request_id'], resp_json["number"]
@@ -166,5 +164,3 @@ class Smsman:
         return params
 
 
-sms = Smsman("w9DG_uo_H9PqKqInTcaBLvAOFePOSsDh")
-sms.request_phone_number(1, 1)
