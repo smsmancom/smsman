@@ -1,5 +1,5 @@
 import requests
-from smsman.errors import WrongTokenError, SMSnotReceivedError, LowBalance
+from smsman.errors import WrongTokenError, SMSnotReceivedError, LowBalance, NoNumbers
 
 
 class Smsman:
@@ -78,8 +78,10 @@ class Smsman:
             return resp_json['request_id'], resp_json["number"]
         elif resp_json['error_code'] == "balance":
             raise LowBalance(resp_json['error_msg'])
+        elif resp_json["error_code"] == "no_numbers":
+            raise NoNumbers(resp_json["error_msg"])
         else:
-            raise WrongTokenError(response.json()['error_msg'])
+            raise WrongTokenError(resp_json['error_msg'])
 
     def get_sms(self, request_id: str):
         """
@@ -162,5 +164,3 @@ class Smsman:
             params['request_id'] = request_id
 
         return params
-
-
