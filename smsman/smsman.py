@@ -1,5 +1,8 @@
+# import asyncio
+#
+# import aiohttp
 import requests
-from smsman.errors import WrongTokenError, SMSnotReceivedError, LowBalance, NoNumbers
+from errors import WrongTokenError, SMSnotReceivedError, LowBalance, NoNumbers
 
 
 class Smsman:
@@ -33,11 +36,14 @@ class Smsman:
         """
 
         response = requests.get(self.__base_url + self.__method_balance, params=self.__params)
+        try:
 
-        if "balance" in response.json():
-            return float(response.json()['balance'])
-        else:
-            raise WrongTokenError(response.json()['error_msg'])
+            if "balance" in response.json():
+                return float(response.json()['balance'])
+            else:
+                raise WrongTokenError(response.json()['error_msg'])
+        except:
+            self.get_balance()
 
     def get_limits(self, country_id=None, application_id=None):
         """
@@ -83,6 +89,52 @@ class Smsman:
         else:
             raise WrongTokenError(resp_json['error_msg'])
 
+    # async def get_numbers(self, params, requests_id, numbers,
+    #                       flag_balance, flag_numbers):
+    #
+    #     async with aiohttp.ClientSession() as session:
+    #         response = await session.post(self.__base_url + self.__method_get_number, params=params)
+    #         resp_json = await response.json()
+    #         if "request_id" in resp_json and "number" in resp_json:
+    #             requests_id.append(resp_json['request_id'])
+    #             numbers.append(resp_json['number'])
+    #         elif resp_json['error_code'] == "balance":
+    #             flag_balance[0] += 1
+    #         elif resp_json['error_code'] == "no_numbers":
+    #             flag_numbers[0] += 1
+    #
+    # async def request_phone_numbers(self, country_id: str, application_id: str, amount):
+    #     """
+    #     Queries the phone number by country id and service id.
+    #     Returns request number (needed to receive sms) and phone number.
+    #
+    #     :param country_id: id of country. Can check list on web-site or with method get_all_countries
+    #     :param application_id: id of application. Can check list on web-site or with method get_all_services
+    #     :param amount: Amount of numbers. No more than 100
+    #     :return: requests_id, numbers
+    #     :rtype: list, list
+    #     """
+    #
+    #     tasks = []
+    #     requests_id = []
+    #     numbers = []
+    #     flag_balance = [0]
+    #     flag_numbers = [0]
+    #
+    #     params = self.__check_params(country_id, application_id)
+    #     params['ref'] = self.__ref
+    #
+    #     for i in range(amount):
+    #         task = asyncio.create_task(self.get_numbers(params, requests_id, numbers, flag_balance, flag_numbers))
+    #         tasks.append(task)
+    #     await asyncio.gather(*tasks)
+    #     if len(requests_id) != 0:
+    #         return requests_id, numbers
+    #     elif flag_balance[0] == amount:
+    #         raise LowBalance("No balance")
+    #     elif flag_numbers[0] == amount:
+    #         raise NoNumbers("No numbers")
+
     def get_sms(self, request_id: str):
         """
         Texts out the request number.
@@ -101,6 +153,23 @@ class Smsman:
             return response.json()['sms_code']
         else:
             raise SMSnotReceivedError(response.json()['error_msg'])
+
+    # async def change_status(self, request_id):
+    #     params = {"token": self.__token,
+    #               "request_id": request_id,
+    #               "status": "reject"}
+    #
+    #     async with aiohttp.ClientSession() as session:
+    #         await session.post(self.__base_url + self.__method_reject_number, params=params)
+    #
+    # async def reject_numbers(self, requests_id):
+    #     tasks = []
+    #
+    #     for request_id in requests_id:
+    #         task = asyncio.create_task(self.change_status(request_id))
+    #         tasks.append(task)
+    #
+    #     await asyncio.gather(*tasks)
 
     def reject_number(self, request_id: str):
         """
@@ -164,3 +233,4 @@ class Smsman:
             params['request_id'] = request_id
 
         return params
+
