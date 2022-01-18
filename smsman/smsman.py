@@ -2,7 +2,7 @@
 #
 # import aiohttp
 import requests
-from errors import WrongTokenError, SMSnotReceivedError, LowBalance, NoNumbers
+from smsman.errors import WrongTokenError, SMSnotReceivedError, LowBalance, NoNumbers
 
 
 class Smsman:
